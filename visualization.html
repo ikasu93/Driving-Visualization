@@ -26,18 +26,6 @@
 
 	<body>
 		<div align="center">
-			<button id="open-rightdoor">Open the right door</button>
-			<button id="open-leftdoor">Open the left door</button>
-			<button id="close-rightdoor">Close the right door</button>
-			<button id="close-leftdoor">Close the left door</button>
-			<button id="backlight">Backlight</button>
-			<button id="backlight-off">Backlight Off</button>
-			<button id="frontlight">Frontlight</button>
-			<button id="frontlight-off">Frontlight Off</button>
-			<button id="blink-right">Blink right</button>
-			<button id="blink-left">Blink left</button>
-			<button id="stop-blink-right">Stop Blink right</button>
-			<button id="stop-blink-left">Stop Blink left</button>
 		<div>
 			<h4 style="color:white;">Car material:</h4>
 			<button id="blue-material">Blue</button>
@@ -47,11 +35,13 @@
 			<button id="restart_trigger">Trigger</button>
 		</div>
 		<div>
-			<h4 style="color:white;">Drive functions:</h4>
-			<button id="move-forward">Forward</button>		
+			<h4 style="color:white;">Driving Features:</h4>
+			<button id="move-forward">Forward</button>
 			<button id="move-right">Right</button>
 			<button id="move-left">Left</button>
 			<button id="move-back">Backward</button>
+			<button id="open-rightdoor">Open/close the right door</button>
+			<button id="open-leftdoor">Open/close the left door</button>
 		</div>
 		<!--<button onClick="showGameOverScreen()" style="position: absolute; top:50%;" id="restart_trigger">Trigger</button>-->
 		<div style="display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background-color: #000000; opacity: 1;" id="close_layer">
@@ -287,15 +277,60 @@
 				}			
 				
 				// Duplicate the building and set it to the neighborhood
-				var obj2 = object.clone();
-				scene.add(obj2);
-				obj2.position.z -=60;
 				
-				var obj3 = obj2.clone();
-				scene.add(obj3);
-				obj3.position.z -=60;
+				//var obj2 = object.clone();
+				//scene.add(obj2);
+				//obj2.position.z -=60;
+				
+				var tmp = scene.add(object.clone());
+					
+				
+				//var obj3 = obj2.clone();
+				//scene.add(obj3);
+				//obj3.position.z -=60;
 				
 			}, onProgress, onError );
+			/*
+			var loader = new THREE.JSONLoader();
+			loader.load( "models/tree.json", function( geometry ){
+				var material, mesh, i, j, instance;
+				material = new THREE.MeshLambertMaterial({ color: 0x55B663 });
+				mesh = new THREE.Mesh( geometry, material );
+				for ( i = 0; i < 15; i += 3 ) {
+				  for ( j = 0; j < 15; j += 3 ) {
+					instance = mesh.clone();
+					instance.position.set( i, 0, j );
+					group.add( instance );
+				  }
+				}
+			});
+			*/
+			/*
+			const loader = new THREE.ObjectLoader();
+
+			loader.load(
+				// resource URL
+				"models/tree.json",
+
+				// onLoad callback
+				// Here the loaded data is assumed to be an object
+				function ( obj ) {
+					// Add the loaded object to the scene
+					scene.add( obj );
+				},
+
+				// onProgress callback
+				function ( xhr ) {
+					console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+				},
+
+				// onError callback
+				function ( err ) {
+					console.error( 'An error happened' );
+				}
+			);
+			*/
+			
 			
 			// CubeMap
 			var path = "textures/cube/Bridge2/";//textures/cube/SwedishRoyalCastle/
@@ -311,6 +346,45 @@
 						
 			animate();
 			
+			// prepare the renderer
+
+			let WIDTH
+			let HEIGHT
+			let aspectRatio = function() {
+			  return WIDTH / HEIGHT
+			}
+
+
+			function resize() {
+			  WIDTH = window.innerWidth
+			  HEIGHT = window.innerHeight
+			  renderer.setSize(WIDTH, HEIGHT)
+			  camera.aspect = aspectRatio()
+			  camera.updateProjectionMatrix()
+			}
+			resize()
+
+			window.addEventListener("resize", resize)
+
+			const sun = new THREE.DirectionalLight(0xffffcc)
+			sun.position.set(0, 1, 0)
+			scene.add(sun)
+
+
+			let tex = new THREE.TextureLoader().load("https://upload.wikimedia.org/wikipedia/commons/0/0d/Asphalt_high_resolution_texture.jpg")
+			tex.anisotropy = 32
+			tex.repeat.set(1000, 1000)
+			tex.wrapT = THREE.RepeatWrapping
+			tex.wrapS = THREE.RepeatWrapping
+			geo = new THREE.PlaneBufferGeometry(10000, 10000)
+			mat = new THREE.MeshLambertMaterial({
+			  map: tex
+			})
+			mesh = new THREE.Mesh(geo, mat)
+			mesh.position.set(0, -5, 0)
+			mesh.rotation.set(Math.PI / -2, 0, 0)
+			scene.add(mesh)
+			
 			function init() {
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
@@ -321,6 +395,8 @@
 				
 				// Scene
 				scene = new THREE.Scene();	
+				scene.fog = new THREE.Fog( 0x000000, 500, 10000 );
+				//scene.fog.color.setHSV( 0.6, 0.2, 1 );
 
 				// LIGHTS
 				var ambient = new THREE.AmbientLight( 0x050505 );
@@ -367,7 +443,7 @@
 				/* Set the ground
 				// First Ground: Grass
 				// Second Ground: Asphalt
-				*/
+				
 				var floorTexture = new THREE.ImageUtils.loadTexture( 'images/wall.jpg' );//sand-512//checkerboard.jpg
 				floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
 				floorTexture.repeat.set( 100, 100 );
@@ -387,8 +463,8 @@
 				var floor2Material = new THREE.MeshBasicMaterial( { map: floor2Texture, side: THREE.DoubleSide } );
 				var floor2Geometry = new THREE.PlaneGeometry(300,400, 100, 100);
 				var floor2 = new THREE.Mesh(floor2Geometry, floor2Material);
-				floor.position.y -=0.02;
-				floor.position.x-=30;
+				//floor.position.y -=0.02;
+				//floor.position.x-=30;
 				floor2.rotation.x = Math.PI / 2;
 				floor2.castShadow = true;
 				floor2.receiveShadow = true;
@@ -398,6 +474,7 @@
                 scene.add(axes);
                 axes.position.y = 2;
 				*/
+				
 			}
 			
 			function onWindowResize( event ) {
@@ -507,6 +584,36 @@
 				moveRight();
 			});
 			
+			// moving with keys
+			document.onkeydown = checkKey;
+
+			function checkKey(e) {
+
+				e = e || window.event;
+
+				if (e.keyCode == '38') {
+					// up arrow
+					moveForward();
+				}
+				else if (e.keyCode == '40') {
+					// down arrow
+					moveBackward();
+				}
+				else if (e.keyCode == '37') {
+				   // left arrow
+				   moveLeft();
+				}
+				else if (e.keyCode == '39') {
+				   // right arrow
+				   moveRight();
+				}
+				else if (e.keyCode == '32') {
+				   // right arrow
+				   stopCar();
+				}
+
+			}
+			
 			//update Global Position
 			function setPosition(object,x1,y1,z1){
 				object.position.x = x1;
@@ -551,26 +658,44 @@
 					carDegree = angleDeg;
 				}
 			}
+			var frame = 0;
 			
 			function moveForward(){
-				currentCar.position.z -= 1/8*Math.sin(-angle);
-				currentCar.position.x -=1/8*Math.cos(-angle);
-				
-				requestAnimationFrame( moveForward );
-				carStatus = 1; //moving
+				if (carStatus != -1){
+					currentCar.position.z -= 1/8*Math.sin(-angle);
+					console.log("z: "+currentCar.position.z)
+					currentCar.position.x -=1/8*Math.cos(-angle);
+					
+					frame = requestAnimationFrame( moveForward );
+					console.log("frame: "+frame)
+					
+					carStatus = 1; //moving	
+				}
 			}	
 			
+			function stopCar(){
+				time1 = frame;
+				cancelAnimationFrame(frame);
+				time2 = frame;
+				if (time1 === time2){
+					carStatus = 0;
+				}
+				console.log(carStatus)
+			}
+			/*
 			var forwardButton = document.getElementById('move-forward');	
 			forwardButton.addEventListener('click', function(){
 				moveForward();
 			});
-
+			*/
 			function moveBackward(){
-				currentCar.position.z += 1/8*Math.sin(-angle);
-				currentCar.position.x += 1/8*Math.cos(-angle);
-				requestAnimationFrame( moveBackward );
+				if (carStatus != 1){
+					currentCar.position.z += 1/8*Math.sin(-angle);
+					currentCar.position.x += 1/8*Math.cos(-angle);
+					frame = requestAnimationFrame( moveBackward );
 
-				carStatus = 1; //moving
+					carStatus = -1; //moving
+				}
 			}
 			var backwardButton = document.getElementById('move-back');
 			backwardButton.addEventListener('click', function(){
@@ -593,10 +718,7 @@
 					rightDoorStatus = true;// now it's open
 				}
 			}
-			var openRightDoorButton = document.getElementById('open-rightdoor');
-			openRightDoorButton.addEventListener('click', function(){
-				openRightdoor();
-			});
+			
 
 			function closeRightdoor(){
 				var wholeRightDoor = [rightDoor, rightMirror, rightWindow];
@@ -608,12 +730,17 @@
 					}
 					rightDoorStatus = false;
 				}
-			}
-			var closeRightDoorButton = document.getElementById('close-rightdoor');
-			closeRightDoorButton.addEventListener('click', function(event){
-				closeRightdoor();
-				event.preventDefault();
-			});		
+			}	
+			
+			var openRightDoorButton = document.getElementById('open-rightdoor');
+			openRightDoorButton.addEventListener('click', function(){
+				if(rightDoorStatus == false){
+					openRightdoor();
+				}
+				else{
+					closeRightdoor();
+				}
+			});
 			
 			function openLeftdoor(){
 				var wholeLeftDoor = [leftDoor, leftMirror, leftWindow];
@@ -628,7 +755,12 @@
 			}
 			var openLeftDoorButton = document.getElementById('open-leftdoor');
 			openLeftDoorButton.addEventListener('click', function(){
-				openLeftdoor();
+				if(leftDoorStatus == false){
+					openLeftdoor();
+				}
+				else{
+					closeLeftdoor();
+				}
 			});	
 
 			function closeLeftdoor(){
@@ -642,10 +774,6 @@
 					leftDoorStatus = false;
 				}
 			}
-			var closeLeftDoorButton = document.getElementById('close-leftdoor');
-			closeLeftDoorButton.addEventListener('click', function(){
-				closeLeftdoor();
-			});
 
 			/*
 			// Light functions
@@ -904,6 +1032,14 @@
 				turnFrontlightsOff();
 			});
 			
+			function cameraUpdate(){
+			   //creating an offset position for camera with respect to the car
+				var offset = new THREE.Vector3(currentCar.position.x + 20, currentCar.position.y + 6, currentCar.position.z);
+				//tried to create delay position value for enable smooth transition for camera 
+				currentCar.position.lerp(offset, 0.2);
+				//updating lookat alway look at the car
+				camera.lookAt(currentCar.position.x, currentCar.position.y, currentCar.position.z); 
+			}
 
 			// var t = 0;
 			function animate() {
@@ -915,6 +1051,8 @@
 			//
 			function render() {
 				scene.add(currentCar);
+				//camera.position.set(currentCar.position.x, currentCar.position.y+5, currentCar.position.z)
+				//cameraUpdate();
 				renderer.render( scene, camera );
 				stats.update();
 			}
