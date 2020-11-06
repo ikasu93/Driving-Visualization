@@ -278,59 +278,16 @@
 				
 				// Duplicate the building and set it to the neighborhood
 				
-				//var obj2 = object.clone();
-				//scene.add(obj2);
-				//obj2.position.z -=60;
+				var obj2 = object.clone();
+				scene.add(obj2);
+				obj2.position.z -=60;
+								
 				
-				var tmp = scene.add(object.clone());
-					
-				
-				//var obj3 = obj2.clone();
-				//scene.add(obj3);
-				//obj3.position.z -=60;
+				var obj3 = obj2.clone();
+				scene.add(obj3);
+				obj3.position.z -=60;
 				
 			}, onProgress, onError );
-			/*
-			var loader = new THREE.JSONLoader();
-			loader.load( "models/tree.json", function( geometry ){
-				var material, mesh, i, j, instance;
-				material = new THREE.MeshLambertMaterial({ color: 0x55B663 });
-				mesh = new THREE.Mesh( geometry, material );
-				for ( i = 0; i < 15; i += 3 ) {
-				  for ( j = 0; j < 15; j += 3 ) {
-					instance = mesh.clone();
-					instance.position.set( i, 0, j );
-					group.add( instance );
-				  }
-				}
-			});
-			*/
-			/*
-			const loader = new THREE.ObjectLoader();
-
-			loader.load(
-				// resource URL
-				"models/tree.json",
-
-				// onLoad callback
-				// Here the loaded data is assumed to be an object
-				function ( obj ) {
-					// Add the loaded object to the scene
-					scene.add( obj );
-				},
-
-				// onProgress callback
-				function ( xhr ) {
-					console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-				},
-
-				// onError callback
-				function ( err ) {
-					console.error( 'An error happened' );
-				}
-			);
-			*/
-			
 			
 			// CubeMap
 			var path = "textures/cube/Bridge2/";//textures/cube/SwedishRoyalCastle/
@@ -370,7 +327,7 @@
 			sun.position.set(0, 1, 0)
 			scene.add(sun)
 
-
+			/*
 			let tex = new THREE.TextureLoader().load("https://upload.wikimedia.org/wikipedia/commons/0/0d/Asphalt_high_resolution_texture.jpg")
 			tex.anisotropy = 32
 			tex.repeat.set(1000, 1000)
@@ -384,7 +341,7 @@
 			mesh.position.set(0, -5, 0)
 			mesh.rotation.set(Math.PI / -2, 0, 0)
 			scene.add(mesh)
-			
+			*/
 			function init() {
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
@@ -440,7 +397,6 @@
 				controls.target.set( 0, 0.5, 0 );
 				controls.update();
 				
-				/* Set the ground
 				// First Ground: Grass
 				// Second Ground: Asphalt
 				
