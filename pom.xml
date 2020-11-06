@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <!-- == PROJECT COORDINATES ============================================= -->
+  <parent>
+      <groupId>montiarc</groupId>
+      <artifactId>autonomousdriving</artifactId>
+      <version>4.0.1-SNAPSHOT</version>
+  </parent>
+
+    <groupId>montiarc</groupId>
+    <artifactId>visualization_ho</artifactId>
+    <version>4.0.1-SNAPSHOT</version>
+
+    <!-- == PROJECT DEPENDENCIES ============================================= -->
+
+    <dependencies>
+        <dependency>
+            <groupId>com.sparkjava</groupId>
+            <artifactId>spark-core</artifactId>
+            <version>2.5.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.21</version>
+            <!--<scope>test</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${jsonVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jscience</groupId>
+            <artifactId>jscience</artifactId>
+            <version>4.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>montiarc.languages</groupId>
+            <artifactId>montiarc-fe</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>montiarc.languages</groupId>
+            <artifactId>montiarc-fe</artifactId>
+            <classifier>${grammars.classifier}</classifier>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>montiarc.languages</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>montiarc.languages</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+            <classifier>${grammars.classifier}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>montiarc.verification</groupId>
+            <artifactId>montiarc-execution-order</artifactId>
+            <version>4.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>montiarc.featurelibraries</groupId>
+            <artifactId>simulink2montiarc</artifactId>
+            <version>4.0.1-SNAPSHOT</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>montiarc.featurelibraries</groupId>
+            <artifactId>simulink2montiarc</artifactId>
+            <version>4.0.1-SNAPSHOT</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>de.monticore</groupId>
+            <artifactId>monticore-runtime</artifactId>
+        </dependency>
+    </dependencies>
+
+
+    <!-- == PROJECT BUILD SETTINGS =========================================== -->
+
+    <build>
+        <plugins>
+            <!-- Other Configuration -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>de.Server</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
